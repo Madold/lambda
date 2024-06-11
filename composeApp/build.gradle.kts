@@ -54,6 +54,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.org.jetbrains.navigation.compose)
             implementation(libs.org.jetbrains.lifecycle.viewmodel.compose)
+            implementation(libs.io.insert.koin.core)
+            implementation(libs.io.insert.koin.compose)
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
