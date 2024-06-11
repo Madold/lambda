@@ -44,6 +44,9 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.io.insert.koin.android)
+            implementation(libs.io.insert.koin.compose)
+            implementation(libs.androidx.lifecycle.runtime.ktx)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -55,8 +58,6 @@ kotlin {
             implementation(libs.org.jetbrains.navigation.compose)
             implementation(libs.org.jetbrains.lifecycle.viewmodel.compose)
             implementation(libs.io.insert.koin.core)
-            implementation(libs.io.insert.koin.compose)
-
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
