@@ -1,6 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -9,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -28,13 +27,8 @@ kotlin {
         }
         binaries.executable()
     }
-    
-    androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
+
+    androidTarget()
     
     jvm("desktop")
     
@@ -47,6 +41,7 @@ kotlin {
             implementation(libs.io.insert.koin.android)
             implementation(libs.io.insert.koin.compose)
             implementation(libs.androidx.lifecycle.runtime.ktx)
+            implementation(libs.sqldelight.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -58,9 +53,13 @@ kotlin {
             implementation(libs.org.jetbrains.navigation.compose)
             implementation(libs.org.jetbrains.lifecycle.viewmodel.compose)
             implementation(libs.io.insert.koin.core)
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.kotlinx.coroutines.core)
+            //implementation(libs.runtime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.sqldelight.jvm)
         }
     }
 }
