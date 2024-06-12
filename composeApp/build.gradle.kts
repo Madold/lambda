@@ -55,7 +55,7 @@ kotlin {
             implementation(libs.io.insert.koin.core)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.runtime)
+            implementation(libs.sqldelight.runtime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
