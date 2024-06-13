@@ -11,61 +11,42 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import lambda.composeapp.generated.resources.*
-import lambda.composeapp.generated.resources.Res
-import lambda.composeapp.generated.resources.ic_class_scene
-import lambda.composeapp.generated.resources.ic_graduation_cap
-import lambda.composeapp.generated.resources.ic_user
-import org.jetbrains.compose.resources.DrawableResource
+import androidx.navigation.NavHostController
 import org.jetbrains.compose.resources.painterResource
 
-data class DrawerOption(
-    val icon: DrawableResource,
-    val label: String
-)
 
 @Composable
 fun Drawer(
     drawerWidth: Dp = 200.dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavHostController
 ) {
     
-    val drawerOptions = listOf(
-        DrawerOption(
-            icon = Res.drawable.ic_user,
-            label = "Usuarios"
-        ),
-        DrawerOption(
-            icon = Res.drawable.ic_graduation_cap,
-            label = "Cursos",
-        ),
-        DrawerOption(
-            icon = Res.drawable.ic_class_scene,
-            label = "Tutorias"
-        ),
-        DrawerOption(
-            icon = Res.drawable.ic_donation,
-            label = "Donaciones"
-        )
-    )
-    
-    var selectedOption by remember {
-        mutableStateOf(drawerOptions.first())
+    var selectedOption: DrawerOptions by remember {
+        mutableStateOf(DrawerOptions.UsersView)
     }
     
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
-        modifier = Modifier.width(200.dp)
+        modifier = modifier.width(drawerWidth)
                 .fillMaxHeight()
     ) {
         Column(
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            drawerOptions.forEach { drawerOption ->  
+
+            Logo()
+
+            DrawerOptions.entries.forEach { drawerOption ->
                 DrawerItem(
                     drawerOption = drawerOption,
                     isSelected = drawerOption == selectedOption,
-                    onClick = { selectedOption = it }
+                    onClick = {
+                        selectedOption = it
+                        navController.navigate(drawerOption.label) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
         }
@@ -76,9 +57,9 @@ fun Drawer(
 
 @Composable
 fun DrawerItem(
-    drawerOption: DrawerOption,
+    drawerOption: DrawerOptions,
     isSelected: Boolean = false,
-    onClick: (DrawerOption) -> Unit,
+    onClick: (DrawerOptions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     

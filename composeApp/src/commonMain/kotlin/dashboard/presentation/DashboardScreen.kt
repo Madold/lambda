@@ -1,66 +1,56 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package dashboard.presentation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import dashboard.presentation.composables.Drawer
-import dashboard.presentation.composables.Logo
-import dashboard.presentation.composables.SearchBar
-import lambda.composeapp.generated.resources.Res
-import lambda.composeapp.generated.resources.ic_filter
-import org.jetbrains.compose.resources.painterResource
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dashboard.presentation.composables.*
 
 @Composable
 fun DashboardScreen(
     state: DashboardState,
     onEvent: (DashboardEvent) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    SearchBar(
-                        value = state.usersQuery,
-                        onValueChange = { onEvent(DashboardEvent.ChangeUserQuery(it)) },
-                        modifier = Modifier
-                            .defaultMinSize(minWidth = 300.dp)
-                            .fillMaxWidth(0.6f)
-                    )
-                },
-                navigationIcon = {
-                    Logo()
-                },
-                modifier = Modifier.padding(horizontal = 16.dp),
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null
-                        )
-                    }
 
-                    IconButton(onClick = {}) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_filter),
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Row(
-          modifier = Modifier
-              .padding(innerPadding)
-              .fillMaxSize()  
+    val drawerNavController = rememberNavController()
+
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        Drawer(
+            navController = drawerNavController,
+        )
+
+        NavHost(
+            navController = drawerNavController,
+            startDestination = DrawerOptions.UsersView.label
         ) {
-            Drawer()
+
+            composable(route = DrawerOptions.UsersView.label) {
+                UsersListView(
+                    users = state.users,
+                    query = state.usersQuery,
+                    onQueryChange = { onEvent(DashboardEvent.ChangeUserQuery(it)) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            composable(route = DrawerOptions.CoursesView.label) {
+                Text("Cursos")
+            }
+
+            composable(route = DrawerOptions.MentoriesView.label) {
+                Text("Tutorias")
+            }
+
+            composable(route = DrawerOptions.DonationsView.label) {
+                Text("Donaciones")
+            }
+
         }
     }
 }
