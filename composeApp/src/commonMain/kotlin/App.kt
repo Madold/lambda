@@ -1,6 +1,5 @@
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -8,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import core.presentation.Screens
 import core.utils.pop
+import dashboard.presentation.DashboardScreen
+import dashboard.presentation.DashboardState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import splash.presentation.SplashScreen
@@ -40,10 +41,10 @@ fun App() {
                 }
 
                 composable(route = Screens.Dashboard.route) {
-
-
-                    //TODO: Implement dashboard screen
-                    Text("Dashboard")
+                    DashboardScreen(
+                        state = DashboardState(),
+                        onEvent = {}
+                    )
                 }
             }
 

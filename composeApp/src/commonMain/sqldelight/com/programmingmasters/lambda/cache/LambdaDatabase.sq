@@ -1,0 +1,18 @@
+
+CREATE TABLE user(
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    email TEXT NOT NULL,
+    rating REAL NOT NULL
+);
+
+insertUser:
+INSERT INTO user(id, name, lastname, email, rating)
+VALUES (?, ?, ?, ?, ?);
+
+deleteAllUsers:
+DELETE FROM user;
+
+getAllUsers:
+SELECT * FROM user;
