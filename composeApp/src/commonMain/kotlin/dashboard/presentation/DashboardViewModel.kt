@@ -4,12 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.model.User
+import dashboard.domain.use_cases.ValidateEmail
+import dashboard.domain.use_cases.ValidateId
+import dashboard.domain.use_cases.ValidateLastName
+import dashboard.domain.use_cases.ValidateName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class DashboardViewModel(
-    private val usersRepository: UsersRepository
+    private val usersRepository: UsersRepository,
+    private val validateId: ValidateId,
+    private val validateName: ValidateName,
+    private val validateLastName: ValidateLastName,
+    private val validateEmail: ValidateEmail
 ): ViewModel() {
     
     private val _state = MutableStateFlow(DashboardState())
@@ -78,6 +86,33 @@ class DashboardViewModel(
             }
             
             is DashboardEvent.SaveUser -> {
+
+                val idValidationResult = validateId(state.value.userId)
+                val nameValidationResult = validateName(state.value.userName)
+                val lastNameValidationResult = validateLastName(state.value.userLastName)
+                val emailValidationResult = validateEmail(state.value.userEmail)
+
+                val isAnyError = listOf(
+                    idValidationResult,
+                    nameValidationResult,
+                    lastNameValidationResult,
+                    emailValidationResult
+                ).any { !it.success }
+
+                if (isAnyError) {
+                    _state.update {
+                        it.copy(
+                            idError = idValidationResult.errorMessage,
+                            nameError = nameValidationResult.errorMessage,
+                            lastNameError = lastNameValidationResult.errorMessage,
+                            emailError = emailValidationResult.errorMessage
+                        )
+                    }
+                    return
+                }
+
+                clearErrors()
+
                 viewModelScope.launch(Dispatchers.IO) {
                     usersRepository.insertUser(
                         User(
@@ -91,6 +126,14 @@ class DashboardViewModel(
                     clearFields()
                 }
             }
+
+            is DashboardEvent.ChangeAddUserDialogVisibility -> {
+                _state.update {
+                    it.copy(
+                        isAddUserDialogVisible = event.isVisible
+                    )
+                }
+            }
         }
     }
     
@@ -102,6 +145,17 @@ class DashboardViewModel(
                 userLastName = "",
                 userEmail = "",
                 userRating = 0.0f
+            )
+        }
+    }
+
+    private fun clearErrors() {
+        _state.update {
+            it.copy(
+                idError = null,
+                nameError = null,
+                lastNameError = null,
+                emailError = null
             )
         }
     }

@@ -9,7 +9,6 @@ import core.presentation.Screens
 import core.presentation.koinViewModel
 import core.utils.pop
 import dashboard.presentation.DashboardScreen
-import dashboard.presentation.DashboardState
 import dashboard.presentation.DashboardViewModel
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.ui.tooling.preview.Preview

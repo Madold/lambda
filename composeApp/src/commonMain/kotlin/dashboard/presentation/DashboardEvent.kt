@@ -8,4 +8,5 @@ sealed interface DashboardEvent {
     data class ChangeUserEmail(val email: String): DashboardEvent
     data class ChangeUserRating(val rating: Float): DashboardEvent
     data object SaveUser: DashboardEvent
+    data class ChangeAddUserDialogVisibility(val isVisible: Boolean): DashboardEvent
 }

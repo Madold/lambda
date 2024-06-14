@@ -10,4 +10,9 @@ data class DashboardState(
     val userLastName: String = "",
     val userEmail: String = "",
     val userRating: Float = 0.0f,
+    val idError: String? = null,
+    val nameError: String? = null,
+    val lastNameError: String? = null,
+    val emailError: String? = null,
+    val isAddUserDialogVisible: Boolean = false
 )
