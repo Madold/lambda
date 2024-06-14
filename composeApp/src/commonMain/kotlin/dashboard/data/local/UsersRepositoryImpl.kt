@@ -6,8 +6,10 @@ import com.programmingmasters.lambda.cache.LambdaDatabase
 import dashboard.data.DatabaseDriverFactory
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.model.User
+import dashboard.domain.model.toUserDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+
 import kotlinx.coroutines.flow.map
 
 class UsersRepositoryImpl(driverFactory: DatabaseDriverFactory): UsersRepository {
@@ -46,6 +48,13 @@ class UsersRepositoryImpl(driverFactory: DatabaseDriverFactory): UsersRepository
 
     override suspend fun deleteAllUsers() {
         queries.deleteAllUsers()
+    }
+
+    override suspend fun getUserById(id: String): User {
+        return queries
+            .getUserById(id)
+            .executeAsOne()
+            .toUserDomainModel()
     }
 
 

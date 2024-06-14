@@ -134,6 +134,27 @@ class DashboardViewModel(
                     )
                 }
             }
+
+            is DashboardEvent.SearchUser -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val user = usersRepository.getUserById(state.value.usersQuery)
+
+                    _state.update {
+                        it.copy(
+                            filteredUsers = listOf(user)
+                        )
+                    }
+                }
+            }
+
+            is DashboardEvent.ClearUserQuery -> {
+                _state.update {
+                    it.copy(
+                        usersQuery = "",
+                        filteredUsers = emptyList()
+                    )
+                }
+            }
         }
     }
     
@@ -144,7 +165,8 @@ class DashboardViewModel(
                 userName = "",
                 userLastName = "",
                 userEmail = "",
-                userRating = 0.0f
+                userRating = 0.0f,
+                isAddUserDialogVisible = false
             )
         }
     }

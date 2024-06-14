@@ -11,11 +11,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dashboard.presentation.DashboardEvent
 import dashboard.presentation.DashboardState
+import lambda.composeapp.generated.resources.*
 import lambda.composeapp.generated.resources.Res
 import lambda.composeapp.generated.resources.empty_ilustration
 import lambda.composeapp.generated.resources.ic_filter
@@ -28,6 +33,10 @@ fun UsersListView(
     modifier: Modifier = Modifier,
 ) {
 
+    var isDropDownMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -35,6 +44,8 @@ fun UsersListView(
                     SearchBar(
                         value = state.usersQuery,
                         onValueChange = { onEvent(DashboardEvent.ChangeUserQuery(it)) },
+                        onSearch = { onEvent(DashboardEvent.SearchUser) },
+                        onClear = { onEvent(DashboardEvent.ClearUserQuery) },
                         modifier = Modifier
                             .defaultMinSize(minWidth = 300.dp)
                             .fillMaxWidth(0.6f)
@@ -50,12 +61,46 @@ fun UsersListView(
                         )
                     }
 
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { isDropDownMenuVisible = true }) {
                         Icon(
                             painter = painterResource(Res.drawable.ic_filter),
                             contentDescription = null
                         )
                     }
+
+                    DropdownMenu(
+                        expanded = isDropDownMenuVisible,
+                        onDismissRequest = { isDropDownMenuVisible = false }
+                    ) {
+
+                        DropdownMenuItem(
+                            onClick = { },
+                            text = {
+                                Text("Nombre ascendente")
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_za),
+                                    contentDescription = null
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            onClick = { },
+                            text = {
+                                Text("Valoración")
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_star),
+                                    contentDescription = null
+                                )
+                            }
+                        )
+
+                    }
+
                 }
             )
         }
@@ -102,7 +147,7 @@ fun UsersListView(
                         }
                     }
                     itemsIndexed(
-                        state.users,
+                        state.filteredUsers.ifEmpty { state.users },
                         key = { _, item -> item.id }
                     ) { index, user ->
                         Row(

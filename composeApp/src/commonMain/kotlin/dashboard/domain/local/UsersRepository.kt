@@ -9,4 +9,6 @@ interface UsersRepository {
     suspend fun insertUser(user: User)
     suspend fun deleteAllUsers()
     
+    suspend fun getUserById(id: String): User
+
 }

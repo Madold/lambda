@@ -1,8 +1,12 @@
 package dashboard.presentation.composables
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import lambda.composeapp.generated.resources.Res
+import lambda.composeapp.generated.resources.ic_clear
 import lambda.composeapp.generated.resources.ic_search
 import org.jetbrains.compose.resources.painterResource
 
@@ -17,7 +22,9 @@ import org.jetbrains.compose.resources.painterResource
 fun SearchBar(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onSearch: () -> Unit,
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     
     OutlinedTextField(
@@ -30,11 +37,28 @@ fun SearchBar(
             .scale(0.9f),
         shape = RoundedCornerShape(size = 20.dp),
         trailingIcon = {
-            Icon(
-                painter = painterResource(Res.drawable.ic_search),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
+            IconButton(onClick = { onSearch() }) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_search),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        },
+        leadingIcon = {
+            AnimatedVisibility(
+                visible = value.isNotBlank(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                IconButton(onClick = { onClear() }) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_clear),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
         }
     )
     

@@ -14,5 +14,6 @@ data class DashboardState(
     val nameError: String? = null,
     val lastNameError: String? = null,
     val emailError: String? = null,
-    val isAddUserDialogVisible: Boolean = false
+    val isAddUserDialogVisible: Boolean = false,
+    val filteredUsers: List<User> = listOf()
 )

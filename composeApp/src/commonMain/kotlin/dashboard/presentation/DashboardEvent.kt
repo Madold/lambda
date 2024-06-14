@@ -9,4 +9,6 @@ sealed interface DashboardEvent {
     data class ChangeUserRating(val rating: Float): DashboardEvent
     data object SaveUser: DashboardEvent
     data class ChangeAddUserDialogVisibility(val isVisible: Boolean): DashboardEvent
+    data object SearchUser: DashboardEvent
+    data object ClearUserQuery: DashboardEvent
 }
