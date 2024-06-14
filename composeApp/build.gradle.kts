@@ -33,10 +33,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.org.jetbrains.navigation.compose)
             implementation(libs.org.jetbrains.lifecycle.viewmodel.compose)
-            implementation(libs.io.insert.koin.core)
+            api(libs.io.insert.koin.core)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.sqldelight.runtime)
+            implementation(libs.koin.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

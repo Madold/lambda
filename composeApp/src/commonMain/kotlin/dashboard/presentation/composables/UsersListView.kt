@@ -7,15 +7,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dashboard.domain.model.User
 import dashboard.presentation.DashboardEvent
+import dashboard.presentation.DashboardState
 import lambda.composeapp.generated.resources.Res
 import lambda.composeapp.generated.resources.empty_ilustration
 import lambda.composeapp.generated.resources.ic_filter
@@ -23,19 +29,22 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun UsersListView(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    users: List<User>,
+    state: DashboardState,
+    onEvent: (DashboardEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    var isAddUserDialogVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     SearchBar(
-                        value = query,
-                        onValueChange = onQueryChange,
+                        value = state.usersQuery,
+                        onValueChange = { onEvent(DashboardEvent.ChangeUserQuery(it)) },
                         modifier = Modifier
                             .defaultMinSize(minWidth = 300.dp)
                             .fillMaxWidth(0.6f)
@@ -43,7 +52,7 @@ fun UsersListView(
                 },
                 actions = {
                     IconButton(onClick = {
-
+                        isAddUserDialogVisible = true
                     }) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -62,7 +71,7 @@ fun UsersListView(
         }
     ) { innerPadding ->
         AnimatedContent(
-            targetState = users.isEmpty(),
+            targetState = state.users.isEmpty(),
             modifier = modifier.padding(innerPadding)
         ) { isUsersListEmpty ->
             if (isUsersListEmpty) {
@@ -77,13 +86,91 @@ fun UsersListView(
                 }
             } else {
                 LazyColumn {
-                    items(users, key = { it.id }) { user ->
-                        //TODO Create user item
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            UsersListHeader(modifier = Modifier.weight(1f)) {
+                                Text("id")
+                            }
+
+                            UsersListHeader(modifier = Modifier.weight(1f)) {
+                                Text("Nombre")
+                            }
+
+                            UsersListHeader(modifier = Modifier.weight(1f)) {
+                                Text("Apellido")
+                            }
+
+                            UsersListHeader(modifier = Modifier.weight(1.4f)) {
+                                Text("Correo")
+                            }
+
+                            UsersListHeader(modifier = Modifier.weight(1f)) {
+                                Text("Valoración")
+                            }
+                        }
+                    }
+                    itemsIndexed(
+                        state.users,
+                        key = { _, item -> item.id }
+                    ) { index, user ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+
+                            val isOddIndex = index % 2 == 0
+                            val backgroundColor =
+                                if (isOddIndex) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.secondaryContainer
+
+                            UserListEntry(
+                                modifier = Modifier.weight(1f),
+                                backgroundColor = backgroundColor
+                            ) {
+                                Text(user.id)
+                            }
+
+                            UserListEntry(
+                                modifier = Modifier.weight(1f),
+                                backgroundColor = backgroundColor
+                            ) {
+                                Text(user.name)
+                            }
+
+                            UserListEntry(
+                                modifier = Modifier.weight(1f),
+                                backgroundColor = backgroundColor
+                            ) {
+                                Text(user.lastName)
+                            }
+
+                            UserListEntry(
+                                modifier = Modifier.weight(1.4f),
+                                backgroundColor = backgroundColor
+                            ) {
+                                Text(user.email)
+                            }
+
+                            UserListEntry(
+                                modifier = Modifier.weight(1f),
+                                backgroundColor = backgroundColor
+                            ) {
+                                Text(user.rating.toString())
+                            }
+                        }
                     }
                 }
             }
-
         }
+
+        if (isAddUserDialogVisible) {
+            AddUserDialog(
+                state = state,
+                onEvent = onEvent,
+                onDismissRequest = { isAddUserDialogVisible = false }
+            )
+        }
+
     }
 
 

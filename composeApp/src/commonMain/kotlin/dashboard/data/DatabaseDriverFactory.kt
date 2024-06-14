@@ -2,6 +2,6 @@ package dashboard.data
 
 import app.cash.sqldelight.db.SqlDriver
 
-expect class DatabaseDriver {
+interface DatabaseDriverFactory {
     fun createDriver(): SqlDriver
 }

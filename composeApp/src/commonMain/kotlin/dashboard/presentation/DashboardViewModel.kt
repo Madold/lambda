@@ -12,18 +12,21 @@ class DashboardViewModel(
     private val usersRepository: UsersRepository
 ): ViewModel() {
     
-    private val _usersList = usersRepository.getAllUsers()
     private val _state = MutableStateFlow(DashboardState())
-    val state = combine(_usersList, _state) { usersList , state ->
-        state.copy(
-            users = usersList
-        )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
-        DashboardState()
-    )
-    
+    val state = _state.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersRepository.getAllUsers().collectLatest { usersList ->
+                _state.update {
+                    it.copy(
+                        users = usersList
+                    )
+                }
+            }
+        }
+    }
+
     fun onEvent(event: DashboardEvent) {
         when (event) {
             is DashboardEvent.ChangeUserQuery -> {
@@ -85,9 +88,22 @@ class DashboardViewModel(
                             rating = state.value.userRating
                         )
                     )
+                    clearFields()
                 }
             }
         }
     }
     
+    private fun clearFields() {
+        _state.update {
+            it.copy(
+                userId = "",
+                userName = "",
+                userLastName = "",
+                userEmail = "",
+                userRating = 0.0f
+            )
+        }
+    }
+
 }

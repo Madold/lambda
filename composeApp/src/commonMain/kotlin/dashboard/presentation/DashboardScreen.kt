@@ -21,9 +21,7 @@ fun DashboardScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        Drawer(
-            navController = drawerNavController,
-        )
+        Drawer(navController = drawerNavController)
 
         NavHost(
             navController = drawerNavController,
@@ -32,10 +30,9 @@ fun DashboardScreen(
 
             composable(route = DrawerOptions.UsersView.label) {
                 UsersListView(
-                    users = state.users,
-                    query = state.usersQuery,
-                    onQueryChange = { onEvent(DashboardEvent.ChangeUserQuery(it)) },
-                    modifier = Modifier.weight(1f)
+                    state = state,
+                    modifier = Modifier.weight(1f),
+                    onEvent = onEvent
                 )
             }
 

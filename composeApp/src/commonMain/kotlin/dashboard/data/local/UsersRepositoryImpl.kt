@@ -3,15 +3,18 @@ package dashboard.data.local
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.programmingmasters.lambda.cache.LambdaDatabase
+import dashboard.data.DatabaseDriverFactory
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class UsersRepositoryImpl(private val db: LambdaDatabase): UsersRepository {
+class UsersRepositoryImpl(driverFactory: DatabaseDriverFactory): UsersRepository {
+
+    private val database = LambdaDatabase(driverFactory.createDriver())
+    private val queries = database.lambdaDatabaseQueries
     
-    private val queries = db.lambdaDatabaseQueries
     override fun getAllUsers(): Flow<List<User>> {
         return queries
             .getAllUsers()
