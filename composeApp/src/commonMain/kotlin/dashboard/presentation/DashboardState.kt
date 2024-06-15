@@ -1,5 +1,6 @@
 package dashboard.presentation
 
+import dashboard.domain.model.Mentoring
 import dashboard.domain.model.User
 
 data class DashboardState(
@@ -16,5 +17,15 @@ data class DashboardState(
     val emailError: String? = null,
     val isAddUserDialogVisible: Boolean = false,
     val filteredUsers: List<User> = listOf(),
-    val usersSortType: UsersListSortType = UsersListSortType.NameAsc
+    val usersSortType: UsersListSortType = UsersListSortType.NameAsc,
+    val mentories: List<Mentoring> = listOf(),
+    val mentoriesQuery: String = "",
+    val mentoringDate: String = "",
+    val mentoringDuration: Long = 0L,
+    val mentoringPrice: Double = 0.0,
+    val mentoringTotalReveune: Double = 0.0,
+    val mentoringUserId: String = "",
+    val mentoringListSortType: MentoringListSortType = MentoringListSortType.Duration,
+    val filteredMentories: List<Mentoring> = listOf(),
+    val isAddMentoringDialogVisible: Boolean = false
 )

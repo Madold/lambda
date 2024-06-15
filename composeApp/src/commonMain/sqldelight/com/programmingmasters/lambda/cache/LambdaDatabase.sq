@@ -58,6 +58,18 @@ getAllMentories:
 SELECT * FROM mentoring_entity
 ORDER BY date ASC;
 
+getAllMentoriesByRevenueAsc:
+SELECT * FROM mentoring_entity
+ORDER BY totalReveune ASC;
+
+getAllMentoriesByRevenueDesc:
+SELECT * FROM mentoring_entity
+ORDER BY totalReveune DESC;
+
+getAllMentoriesByDuration:
+SELECT * FROM mentoring_entity
+ORDER BY duration DESC;
+
 getMentoryById:
 SELECT * FROM mentoring_entity
 WHERE id = ?;
@@ -68,7 +80,7 @@ WHERE userId = ?;
 
 updateMentory:
 UPDATE mentoring_entity
-SET date = ?, duration = ?, price = ?, totalReveune = ?, userId = ?
+SET date = ?, duration = ?, price = ?, totalReveune = ?
 WHERE id = ?;
 
 deleteMentory:

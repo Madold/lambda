@@ -43,7 +43,15 @@ fun DashboardScreen(
             }
 
             composable(route = DrawerOptions.MentoriesView.label) {
-                Text("Tutorias")
+
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                MentoriesListView(
+                    state = state,
+                    onEvent = onEvent,
+                    snackbarHostState = snackbarHostState,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             composable(route = DrawerOptions.DonationsView.label) {

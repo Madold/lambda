@@ -3,7 +3,9 @@ package dashboard.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.utils.Result
+import dashboard.domain.local.MentoringRepository
 import dashboard.domain.local.UsersRepository
+import dashboard.domain.model.Mentoring
 import dashboard.domain.model.User
 import dashboard.domain.use_cases.ValidateEmail
 import dashboard.domain.use_cases.ValidateId
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(
     private val usersRepository: UsersRepository,
+    private val mentoringRepository: MentoringRepository,
     private val validateId: ValidateId,
     private val validateName: ValidateName,
     private val validateLastName: ValidateLastName,
@@ -37,6 +40,17 @@ class DashboardViewModel(
                 }
             }
         }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            mentoringRepository.getAllMentories().collectLatest { mentories ->
+                _state.update {
+                    it.copy(
+                        mentories = mentories
+                    )
+                }
+            }
+        }
+
     }
 
     fun onEvent(event: DashboardEvent) {
@@ -206,6 +220,138 @@ class DashboardViewModel(
             is DashboardEvent.DeleteUser -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     usersRepository.deleteUserById(event.id)
+                }
+            }
+
+            is DashboardEvent.ChangeMentoriesQuery -> {
+                _state.update {
+                    it.copy(
+                        mentoriesQuery = event.query
+                    )
+                }
+            }
+            is DashboardEvent.ChangeMentoringDate -> {
+                _state.update {
+                    it.copy(
+                        mentoringDate = event.date
+                    )
+                }
+            }
+            is DashboardEvent.ChangeMentoringDuration -> {
+                _state.update {
+                    it.copy(
+                        mentoringDuration = event.duration
+                    )
+                }
+            }
+            is DashboardEvent.ChangeMentoringPrice -> {
+                _state.update {
+                    it.copy(
+                        mentoringPrice = event.price
+                    )
+                }
+            }
+            is DashboardEvent.ChangeMentoringSortType -> {
+                _state.update {
+                    it.copy(
+                        mentoringListSortType = event.sortType
+                    )
+                }
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    val filteredMentories =  when (event.sortType) {
+                        MentoringListSortType.TotalReveuneAsc -> mentoringRepository.getAllMentoriesByRevenueAsc()
+                        MentoringListSortType.TotalReveuneDesc -> mentoringRepository.getAllMentoriesByRevenueDesc()
+                        MentoringListSortType.Duration -> mentoringRepository.getAllMentoriesByDuration()
+                    }
+
+                    _state.update {
+                        it.copy(
+                            filteredMentories = filteredMentories
+                        )
+                    }
+                }
+
+            }
+            is DashboardEvent.ChangeMentoringTotalRevenue -> {
+                _state.update {
+                    it.copy(
+                        mentoringTotalReveune = event.revenue
+                    )
+                }
+            }
+            is DashboardEvent.ChangeMentoringUserId -> {
+                _state.update {
+                    it.copy(
+                        mentoringUserId = event.userId
+                    )
+                }
+            }
+
+            DashboardEvent.SaveMentoring -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    mentoringRepository.insertMentoring(
+                        Mentoring(
+                            date = state.value.mentoringDate,
+                            duration = state.value.mentoringDuration,
+                            price = state.value.mentoringPrice,
+                            totalRevenue = state.value.mentoringTotalReveune,
+                            userId = state.value.mentoringUserId
+                        )
+                    )
+                }
+
+                _state.update {
+                    it.copy(
+                        isAddMentoringDialogVisible = false
+                    )
+                }
+            }
+
+            is DashboardEvent.SearchMentoring -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (val result = mentoringRepository.getMentoriesByUserId(state.value.mentoriesQuery)) {
+                        is Result.Error -> {
+
+                        }
+                        is Result.Success -> {
+                            _state.update {
+                                it.copy(
+                                    filteredMentories = result.data ?: emptyList()
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            is DashboardEvent.ChangeAddMentoringDialogVisibility -> {
+                _state.update {
+                    it.copy(
+                        isAddMentoringDialogVisible = event.isVisible
+                    )
+                }
+            }
+
+            is DashboardEvent.ClearMentoringQuery -> {
+                _state.update {
+                    it.copy(
+                        mentoriesQuery = "",
+                        filteredMentories = emptyList()
+                    )
+                }
+            }
+
+            is DashboardEvent.UpdateMentoring -> {
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    mentoringRepository.updateMentory(event.mentoring)
+                }
+            }
+
+            is DashboardEvent.DeleteMentoringbyId -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    mentoringRepository.deleteMentory(event.mentoringId)
                 }
             }
         }

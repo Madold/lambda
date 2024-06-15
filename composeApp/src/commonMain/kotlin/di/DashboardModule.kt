@@ -1,6 +1,8 @@
 package di
 
+import dashboard.data.local.MentoringRepositoryImpl
 import dashboard.data.local.UsersRepositoryImpl
+import dashboard.domain.local.MentoringRepository
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.use_cases.ValidateEmail
 import dashboard.domain.use_cases.ValidateId
@@ -30,4 +32,8 @@ val dashboardModule = module {
         ValidateEmail()
     }
     
+    single<MentoringRepository> {
+        MentoringRepositoryImpl(get())
+    }
+
 }

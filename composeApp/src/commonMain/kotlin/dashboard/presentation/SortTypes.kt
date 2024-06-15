@@ -6,3 +6,9 @@ enum class UsersListSortType {
     NameDesc,
     Rating
 }
+
+enum class MentoringListSortType {
+    TotalReveuneAsc,
+    TotalReveuneDesc,
+    Duration
+}
