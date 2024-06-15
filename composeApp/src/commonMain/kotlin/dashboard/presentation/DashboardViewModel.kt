@@ -117,18 +117,15 @@ class DashboardViewModel(
 
                 clearErrors()
 
-                viewModelScope.launch(Dispatchers.IO) {
-                    usersRepository.insertUser(
-                        User(
-                            id = state.value.userId,
-                            name = state.value.userName,
-                            lastName = state.value.userLastName,
-                            email = state.value.userEmail,
-                            rating = state.value.userRating
-                        )
+                saveUser(
+                    User(
+                        id = state.value.userId,
+                        name = state.value.userName,
+                        lastName = state.value.userLastName,
+                        email = state.value.userEmail,
+                        rating = state.value.userRating
                     )
-                    clearFields()
-                }
+                )
             }
 
             is DashboardEvent.ChangeAddUserDialogVisibility -> {
@@ -142,7 +139,11 @@ class DashboardViewModel(
             is DashboardEvent.SearchUser -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     when (val result = usersRepository.getUserById(state.value.usersQuery)) {
-                        is Result.Error -> channel.send(DashboardViewModelEvent.UserNotFoundError(result.message ?: "Unknown Error"))
+                        is Result.Error -> channel.send(
+                            DashboardViewModelEvent.UserNotFoundError(
+                                result.message ?: "Unknown Error"
+                            )
+                        )
 
                         is Result.Success -> {
                             _state.update {
@@ -207,6 +208,14 @@ class DashboardViewModel(
                     usersRepository.deleteUserById(event.id)
                 }
             }
+        }
+    }
+
+
+    private fun saveUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersRepository.insertUser(user)
+            clearFields()
         }
     }
 
