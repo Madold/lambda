@@ -10,16 +10,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dashboard.presentation.DashboardEvent
 import dashboard.presentation.DashboardState
+import dashboard.presentation.UsersListSortType
 import lambda.composeapp.generated.resources.*
 import lambda.composeapp.generated.resources.Res
 import lambda.composeapp.generated.resources.empty_ilustration
@@ -31,6 +29,7 @@ fun UsersListView(
     state: DashboardState,
     onEvent: (DashboardEvent) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState
 ) {
 
     var isDropDownMenuVisible by rememberSaveable {
@@ -38,6 +37,7 @@ fun UsersListView(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -48,7 +48,7 @@ fun UsersListView(
                         onClear = { onEvent(DashboardEvent.ClearUserQuery) },
                         modifier = Modifier
                             .defaultMinSize(minWidth = 300.dp)
-                            .fillMaxWidth(0.6f)
+                            .fillMaxWidth(0.6f),
                     )
                 },
                 actions = {
@@ -74,20 +74,31 @@ fun UsersListView(
                     ) {
 
                         DropdownMenuItem(
-                            onClick = { },
+                            onClick = {
+
+                                if (state.usersSortType == UsersListSortType.NameDesc) {
+                                    onEvent(DashboardEvent.ChangeUserSortType(UsersListSortType.NameAsc))
+                                    return@DropdownMenuItem
+                                }
+
+                                onEvent(DashboardEvent.ChangeUserSortType(UsersListSortType.NameDesc))
+
+                            },
                             text = {
-                                Text("Nombre ascendente")
+                                Text(text = if (state.usersSortType == UsersListSortType.NameDesc) "Nombre ascendente" else "Nombre descendente")
                             },
                             leadingIcon = {
                                 Icon(
-                                    painter = painterResource(Res.drawable.ic_za),
+                                    painter = painterResource(if (state.usersSortType == UsersListSortType.NameDesc) Res.drawable.ic_za else Res.drawable.ic_az),
                                     contentDescription = null
                                 )
                             }
                         )
 
                         DropdownMenuItem(
-                            onClick = { },
+                            onClick = {
+                                onEvent(DashboardEvent.ChangeUserSortType(UsersListSortType.Rating))
+                            },
                             text = {
                                 Text("Valoración")
                             },

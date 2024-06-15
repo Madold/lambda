@@ -2,6 +2,7 @@ package dashboard.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import core.utils.Result
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.model.User
 import dashboard.domain.use_cases.ValidateEmail
@@ -9,6 +10,7 @@ import dashboard.domain.use_cases.ValidateId
 import dashboard.domain.use_cases.ValidateLastName
 import dashboard.domain.use_cases.ValidateName
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -18,10 +20,12 @@ class DashboardViewModel(
     private val validateName: ValidateName,
     private val validateLastName: ValidateLastName,
     private val validateEmail: ValidateEmail
-): ViewModel() {
-    
+) : ViewModel() {
+
     private val _state = MutableStateFlow(DashboardState())
     val state = _state.asStateFlow()
+    private val channel = Channel<DashboardViewModelEvent>()
+    val events = channel.receiveAsFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -50,9 +54,9 @@ class DashboardViewModel(
                     it.copy(
                         userEmail = event.email
                     )
-                }    
+                }
             }
-            
+
             is DashboardEvent.ChangeUserId -> {
                 _state.update {
                     it.copy(
@@ -60,7 +64,7 @@ class DashboardViewModel(
                     )
                 }
             }
-            
+
             is DashboardEvent.ChangeUserLastName -> {
                 _state.update {
                     it.copy(
@@ -68,7 +72,7 @@ class DashboardViewModel(
                     )
                 }
             }
-            
+
             is DashboardEvent.ChangeUserName -> {
                 _state.update {
                     it.copy(
@@ -76,7 +80,7 @@ class DashboardViewModel(
                     )
                 }
             }
-            
+
             is DashboardEvent.ChangeUserRating -> {
                 _state.update {
                     it.copy(
@@ -84,7 +88,7 @@ class DashboardViewModel(
                     )
                 }
             }
-            
+
             is DashboardEvent.SaveUser -> {
 
                 val idValidationResult = validateId(state.value.userId)
@@ -137,12 +141,16 @@ class DashboardViewModel(
 
             is DashboardEvent.SearchUser -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val user = usersRepository.getUserById(state.value.usersQuery)
+                    when (val result = usersRepository.getUserById(state.value.usersQuery)) {
+                        is Result.Error -> channel.send(DashboardViewModelEvent.UserNotFoundError(result.message ?: "Unknown Error"))
 
-                    _state.update {
-                        it.copy(
-                            filteredUsers = listOf(user)
-                        )
+                        is Result.Success -> {
+                            _state.update {
+                                it.copy(
+                                    filteredUsers = listOf(result.data ?: return@launch)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -155,9 +163,39 @@ class DashboardViewModel(
                     )
                 }
             }
+
+            is DashboardEvent.ChangeUserSortType -> {
+                _state.update {
+                    it.copy(
+                        usersSortType = event.sortType
+                    )
+                }
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    val filteredUsers = when (event.sortType) {
+                        UsersListSortType.NameAsc -> usersRepository.getAllUsersAsc()
+                        UsersListSortType.NameDesc -> usersRepository.getAllUsersDesc()
+                        UsersListSortType.Rating -> usersRepository.getAllUsersByRating()
+                    }
+                    _state.update {
+                        it.copy(
+                            filteredUsers = filteredUsers
+                        )
+                    }
+                }
+            }
+
+            DashboardEvent.ClearUserSortType -> {
+                _state.update {
+                    it.copy(
+                        filteredUsers = emptyList(),
+                        usersSortType = UsersListSortType.NameAsc
+                    )
+                }
+            }
         }
     }
-    
+
     private fun clearFields() {
         _state.update {
             it.copy(
@@ -180,6 +218,11 @@ class DashboardViewModel(
                 emailError = null
             )
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        channel.close()
     }
 
 }

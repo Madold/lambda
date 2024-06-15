@@ -25,19 +25,20 @@ fun SearchBar(
     onSearch: () -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = {
-            Text("ID o nombre del usuario ")
+            Text("ID del usuario ")
         },
         modifier = modifier
             .scale(0.9f),
         shape = RoundedCornerShape(size = 20.dp),
         trailingIcon = {
-            IconButton(onClick = { onSearch() }) {
+            IconButton(onClick = { onSearch() }, enabled = value.isNotBlank()) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_search),
                     contentDescription = null,
@@ -59,7 +60,8 @@ fun SearchBar(
                     )
                 }
             }
-        }
+        },
+        enabled = enabled
     )
     
 }

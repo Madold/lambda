@@ -3,6 +3,7 @@ package dashboard.data.local
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.programmingmasters.lambda.cache.LambdaDatabase
+import core.utils.Result
 import dashboard.data.DatabaseDriverFactory
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.model.User
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 import kotlinx.coroutines.flow.map
+import java.lang.NullPointerException
 
 class UsersRepositoryImpl(driverFactory: DatabaseDriverFactory): UsersRepository {
 
@@ -50,11 +52,40 @@ class UsersRepositoryImpl(driverFactory: DatabaseDriverFactory): UsersRepository
         queries.deleteAllUsers()
     }
 
-    override suspend fun getUserById(id: String): User {
+    override suspend fun getUserById(id: String): Result<User> {
+        return try {
+            val user = queries
+                    .getUserById(id)
+                    .executeAsOne()
+                    .toUserDomainModel()
+
+            Result.Success(user)
+        } catch (e: NullPointerException) {
+            Result.Error("No se encontró usuario con el ID asociado")
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Unknow Error")
+        }
+    }
+
+    override suspend fun getAllUsersAsc(): List<User> {
         return queries
-            .getUserById(id)
-            .executeAsOne()
-            .toUserDomainModel()
+            .getAllUsersAsc()
+            .executeAsList()
+            .map { it.toUserDomainModel() }
+    }
+
+    override suspend fun getAllUsersDesc(): List<User> {
+        return queries
+            .getAllUsersDesc()
+            .executeAsList()
+            .map { it.toUserDomainModel() }
+    }
+
+    override suspend fun getAllUsersByRating(): List<User> {
+        return queries
+            .getAllUsersByRating()
+            .executeAsList()
+            .map { it.toUserDomainModel() }
     }
 
 

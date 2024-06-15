@@ -15,7 +15,16 @@ deleteAllUsers:
 DELETE FROM user;
 
 getAllUsers:
-SELECT * FROM user;
+SELECT * FROM user ORDER BY name ASC;
+
+getAllUsersAsc:
+SELECT * FROM user ORDER BY name ASC;
+
+getAllUsersDesc:
+SELECT * FROM user ORDER BY name DESC;
+
+getAllUsersByRating:
+SELECT * FROM user ORDER BY rating DESC;
 
 getUserById:
 SELECT * FROM user WHERE id = ?;

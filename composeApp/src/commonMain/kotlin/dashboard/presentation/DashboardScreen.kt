@@ -12,7 +12,8 @@ import dashboard.presentation.composables.*
 @Composable
 fun DashboardScreen(
     state: DashboardState,
-    onEvent: (DashboardEvent) -> Unit
+    onEvent: (DashboardEvent) -> Unit,
+    usersViewSnackbarHost: SnackbarHostState = remember { SnackbarHostState() }
 ) {
 
     val drawerNavController = rememberNavController()
@@ -32,7 +33,8 @@ fun DashboardScreen(
                 UsersListView(
                     state = state,
                     modifier = Modifier.weight(1f),
-                    onEvent = onEvent
+                    onEvent = onEvent,
+                    snackbarHostState = usersViewSnackbarHost
                 )
             }
 

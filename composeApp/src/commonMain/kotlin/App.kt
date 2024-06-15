@@ -1,4 +1,6 @@
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,7 +12,9 @@ import core.presentation.koinViewModel
 import core.utils.pop
 import dashboard.presentation.DashboardScreen
 import dashboard.presentation.DashboardViewModel
+import dashboard.presentation.DashboardViewModelEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 import splash.presentation.SplashScreen
@@ -46,10 +50,25 @@ fun App() {
 
                         val viewModel = koinViewModel<DashboardViewModel>()
                         val state by viewModel.state.collectAsState()
+                        val usersViewSnackbarHost = remember { SnackbarHostState() }
+
+                        LaunchedEffect(Unit) {
+                            viewModel.events.collectLatest { event ->
+                                when (event) {
+                                    is DashboardViewModelEvent.UserNotFoundError -> {
+                                        usersViewSnackbarHost.showSnackbar(
+                                            message = event.errorMessage,
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                            }
+                        }
 
                         DashboardScreen(
                             state = state,
-                            onEvent = viewModel::onEvent
+                            onEvent = viewModel::onEvent,
+                            usersViewSnackbarHost = usersViewSnackbarHost
                         )
                     }
                 }

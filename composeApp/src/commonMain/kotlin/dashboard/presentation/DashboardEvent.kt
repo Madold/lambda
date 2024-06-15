@@ -11,4 +11,8 @@ sealed interface DashboardEvent {
     data class ChangeAddUserDialogVisibility(val isVisible: Boolean): DashboardEvent
     data object SearchUser: DashboardEvent
     data object ClearUserQuery: DashboardEvent
+
+    data class ChangeUserSortType(val sortType: UsersListSortType): DashboardEvent
+
+    data object ClearUserSortType: DashboardEvent
 }

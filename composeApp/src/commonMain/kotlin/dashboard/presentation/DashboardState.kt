@@ -15,5 +15,6 @@ data class DashboardState(
     val lastNameError: String? = null,
     val emailError: String? = null,
     val isAddUserDialogVisible: Boolean = false,
-    val filteredUsers: List<User> = listOf()
+    val filteredUsers: List<User> = listOf(),
+    val usersSortType: UsersListSortType = UsersListSortType.NameAsc
 )

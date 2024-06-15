@@ -1,5 +1,6 @@
 package dashboard.domain.local
 
+import core.utils.Result
 import dashboard.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -9,6 +10,12 @@ interface UsersRepository {
     suspend fun insertUser(user: User)
     suspend fun deleteAllUsers()
     
-    suspend fun getUserById(id: String): User
+    suspend fun getUserById(id: String): Result<User>
+
+    suspend fun getAllUsersAsc(): List<User>
+
+    suspend fun getAllUsersDesc(): List<User>
+
+    suspend fun getAllUsersByRating(): List<User>
 
 }
