@@ -1,4 +1,4 @@
-
+-- Entidades y consultas del usuario
 CREATE TABLE user(
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -34,3 +34,74 @@ UPDATE user SET name = ?, lastname = ?, email = ?, rating = ? WHERE id = ?;
 
 deleteUser:
 DELETE FROM user WHERE id = ?;
+
+-- Entidades y consultas de las tutorias
+
+CREATE TABLE mentoring_entity(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    duration INTEGER NOT NULL,
+    price REAL NOT NULL,
+    totalReveune REAL NOT NULL,
+    userId TEXT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user(id)
+);
+
+insertMentory:
+INSERT INTO mentoring_entity(date, duration, price, totalReveune, userId)
+VALUES (?, ?, ?, ?, ?);
+
+deleteAllMentories:
+DELETE FROM mentoring_entity;
+
+getAllMentories:
+SELECT * FROM mentoring_entity
+ORDER BY date ASC;
+
+getMentoryById:
+SELECT * FROM mentoring_entity
+WHERE id = ?;
+
+getMentoriesByUserId:
+SELECT * FROM mentoring_entity
+WHERE userId = ?;
+
+updateMentory:
+UPDATE mentoring_entity
+SET date = ?, duration = ?, price = ?, totalReveune = ?, userId = ?
+WHERE id = ?;
+
+deleteMentory:
+DELETE FROM mentoring_entity
+WHERE id = ?;
+
+-- Entidades y consultas de las donaciones
+
+CREATE TABLE donation_entity(
+    userId TEXT NOT NULL,
+    mentoringId TEXT NOT NULL,
+    price REAL NOT NULL,
+    date TEXT NOT NULL,
+    PRIMARY KEY (userId, mentoringId),
+    FOREIGN KEY (userId) REFERENCES user(id),
+    FOREIGN KEY (mentoringId) REFERENCES mentoring_entity(id)
+);
+
+insertDonation:
+INSERT INTO donation_entity(userId, mentoringId, price, date)
+VALUES (?, ?, ?, ?);
+
+deleteAllDonations:
+DELETE FROM donation_entity;
+
+getAllDonations:
+SELECT * FROM donation_entity
+ORDER BY date ASC;
+
+getDonationsByUserId:
+SELECT * FROM donation_entity
+WHERE userId = ?;
+
+deleteDonation:
+DELETE FROM donation_entity
+WHERE userId = ? AND mentoringId = ?;
