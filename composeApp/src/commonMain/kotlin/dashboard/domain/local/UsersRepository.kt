@@ -18,4 +18,8 @@ interface UsersRepository {
 
     suspend fun getAllUsersByRating(): List<User>
 
+    suspend fun updateUser(user: User)
+
+    suspend fun deleteUserById(id: String)
+
 }

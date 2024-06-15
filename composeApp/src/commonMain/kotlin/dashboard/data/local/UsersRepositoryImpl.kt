@@ -10,7 +10,6 @@ import dashboard.domain.model.User
 import dashboard.domain.model.toUserDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-
 import kotlinx.coroutines.flow.map
 import java.lang.NullPointerException
 
@@ -86,6 +85,20 @@ class UsersRepositoryImpl(driverFactory: DatabaseDriverFactory): UsersRepository
             .getAllUsersByRating()
             .executeAsList()
             .map { it.toUserDomainModel() }
+    }
+
+    override suspend fun updateUser(user: User) {
+        queries.updateUser(
+            name = user.name,
+            lastname = user.lastName,
+            email = user.email,
+            rating = user.rating.toDouble(),
+            id = user.id
+        )
+    }
+
+    override suspend fun deleteUserById(id: String) {
+       queries.deleteUser(id)
     }
 
 

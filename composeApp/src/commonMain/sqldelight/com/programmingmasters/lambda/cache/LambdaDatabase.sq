@@ -28,3 +28,9 @@ SELECT * FROM user ORDER BY rating DESC;
 
 getUserById:
 SELECT * FROM user WHERE id = ?;
+
+updateUser:
+UPDATE user SET name = ?, lastname = ?, email = ?, rating = ? WHERE id = ?;
+
+deleteUser:
+DELETE FROM user WHERE id = ?;

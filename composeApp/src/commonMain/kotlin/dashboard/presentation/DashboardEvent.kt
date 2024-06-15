@@ -1,5 +1,7 @@
 package dashboard.presentation
 
+import dashboard.domain.model.User
+
 sealed interface DashboardEvent {
     data class ChangeUserQuery(val query: String): DashboardEvent
     data class ChangeUserId(val id: String): DashboardEvent
@@ -15,4 +17,6 @@ sealed interface DashboardEvent {
     data class ChangeUserSortType(val sortType: UsersListSortType): DashboardEvent
 
     data object ClearUserSortType: DashboardEvent
+    data class UpdateUser(val user: User ): DashboardEvent
+    data class DeleteUser(val id: String): DashboardEvent
 }

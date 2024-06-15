@@ -193,6 +193,20 @@ class DashboardViewModel(
                     )
                 }
             }
+
+            is DashboardEvent.UpdateUser -> {
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    usersRepository.updateUser(event.user)
+                }
+
+            }
+
+            is DashboardEvent.DeleteUser -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    usersRepository.deleteUserById(event.id)
+                }
+            }
         }
     }
 

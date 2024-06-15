@@ -4,6 +4,11 @@ package dashboard.presentation.composables
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -14,14 +19,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import dashboard.presentation.DashboardEvent
 import dashboard.presentation.DashboardState
 import dashboard.presentation.UsersListSortType
 import lambda.composeapp.generated.resources.*
-import lambda.composeapp.generated.resources.Res
-import lambda.composeapp.generated.resources.empty_ilustration
-import lambda.composeapp.generated.resources.ic_filter
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -161,8 +164,27 @@ fun UsersListView(
                         state.filteredUsers.ifEmpty { state.users },
                         key = { _, item -> item.id }
                     ) { index, user ->
+
+                        val interactionSource = remember { MutableInteractionSource() }
+                        var isEditUserDialogVisible by rememberSaveable { mutableStateOf(false) }
+
                         Row(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .indication(interactionSource, LocalIndication.current)
+                                .pointerInput(true) {
+                                    detectTapGestures(
+                                        onLongPress = {
+                                            isEditUserDialogVisible = true
+                                        },
+                                        onPress = {
+                                            val press = PressInteraction.Press(it)
+                                            interactionSource.emit(press)
+                                            tryAwaitRelease()
+                                            interactionSource.emit(PressInteraction.Release(press))
+                                        }
+                                    )
+                                }
                         ) {
 
                             val isOddIndex = index % 2 == 0
@@ -204,6 +226,15 @@ fun UsersListView(
                                 Text(user.rating.toString())
                             }
                         }
+
+                        if (isEditUserDialogVisible) {
+                            EditUserDialog(
+                                user = user,
+                                onEvent = onEvent,
+                                onDissmissRequest = { isEditUserDialogVisible = false }
+                            )
+                        }
+
                     }
                 }
             }
