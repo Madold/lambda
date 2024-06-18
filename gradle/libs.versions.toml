@@ -20,6 +20,7 @@ lifecycle = "2.3.1"
 sqldelight = "2.0.1"
 coroutinesVersion = "1.7.3"
 koinComposeMultiplatform = "1.2.0-alpha3"
+charts = "Beta-0.0.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -45,6 +46,7 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 sqldelight-js = { module  = "app.cash.sqldelight:sqljs-driver", version.ref = "sqldelight" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesVersion" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinComposeMultiplatform" }
+compose-multiplatform-charts = { module = "io.github.thechance101:chart", version.ref = "charts" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

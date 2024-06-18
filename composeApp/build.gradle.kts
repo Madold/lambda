@@ -38,6 +38,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.sqldelight.runtime)
             implementation(libs.koin.compose)
+            implementation(libs.compose.multiplatform.charts)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
