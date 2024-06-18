@@ -31,5 +31,11 @@ object TextFormattingUtils {
         return format.format(date)
     }
 
+    fun convertToTimestamp(dateString: String): Long {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val date: Date = dateFormat.parse(dateString)
+        return date.time
+    }
+
 }
 

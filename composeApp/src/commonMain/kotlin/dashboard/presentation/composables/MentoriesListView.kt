@@ -35,7 +35,7 @@ fun MentoriesListView(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState
 ) {
-   
+
     var isDropDownMenuVisible by rememberSaveable {
         mutableStateOf(false)
     }
@@ -135,112 +135,122 @@ fun MentoriesListView(
                     )
                 }
             } else {
-                LazyColumn {
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            UsersListHeader(modifier = Modifier.weight(1f)) {
-                                Text("Fecha")
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                UsersListHeader(modifier = Modifier.weight(1f)) {
+                                    Text("Fecha")
+                                }
+
+                                UsersListHeader(modifier = Modifier.weight(1f)) {
+                                    Text("Duración")
+                                }
+
+                                UsersListHeader(modifier = Modifier.weight(1f)) {
+                                    Text("Valor")
+                                }
+
+                                UsersListHeader(modifier = Modifier.weight(1.4f)) {
+                                    Text("Total recaudado")
+                                }
+
+                                UsersListHeader(modifier = Modifier.weight(1f)) {
+                                    Text("id del usuario")
+                                }
+                            }
+                        }
+                        itemsIndexed(
+                            state.filteredMentories.ifEmpty { state.mentories },
+                            key = { _, item -> item.id }
+                        ) { index, mentoring ->
+
+                            val interactionSource = remember { MutableInteractionSource() }
+                            var isEditMentoringDialogVisible by rememberSaveable { mutableStateOf(false) }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .indication(interactionSource, LocalIndication.current)
+                                    .pointerInput(true) {
+                                        detectTapGestures(
+                                            onLongPress = {
+                                                isEditMentoringDialogVisible = true
+                                            },
+                                            onPress = {
+                                                val press = PressInteraction.Press(it)
+                                                interactionSource.emit(press)
+                                                tryAwaitRelease()
+                                                interactionSource.emit(PressInteraction.Release(press))
+                                            }
+                                        )
+                                    }
+                            ) {
+
+                                val isOddIndex = index % 2 == 0
+                                val backgroundColor =
+                                    if (isOddIndex) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.secondaryContainer
+
+                                UserListEntry(
+                                    modifier = Modifier.weight(1f),
+                                    backgroundColor = backgroundColor
+                                ) {
+                                    Text(mentoring.date)
+                                }
+
+                                UserListEntry(
+                                    modifier = Modifier.weight(1f),
+                                    backgroundColor = backgroundColor
+                                ) {
+                                    Text(mentoring.duration.toString())
+                                }
+
+                                UserListEntry(
+                                    modifier = Modifier.weight(1f),
+                                    backgroundColor = backgroundColor
+                                ) {
+                                    Text(mentoring.price.toString())
+                                }
+
+                                UserListEntry(
+                                    modifier = Modifier.weight(1f),
+                                    backgroundColor = backgroundColor
+                                ) {
+                                    Text(mentoring.totalRevenue.toString())
+                                }
+
+                                UserListEntry(
+                                    modifier = Modifier.weight(1.4f),
+                                    backgroundColor = backgroundColor
+                                ) {
+                                    Text(mentoring.userId)
+                                }
+
                             }
 
-                            UsersListHeader(modifier = Modifier.weight(1f)) {
-                                Text("Duración")
+                            if (isEditMentoringDialogVisible) {
+                                EditMentoringDialog(
+                                    mentoring = mentoring,
+                                    onEvent = onEvent,
+                                    onDissmissRequest = {
+                                        isEditMentoringDialogVisible = false
+                                    }
+                                )
                             }
 
-                            UsersListHeader(modifier = Modifier.weight(1f)) {
-                                Text("Valor")
-                            }
-
-                            UsersListHeader(modifier = Modifier.weight(1.4f)) {
-                                Text("Total recaudado")
-                            }
-
-                            UsersListHeader(modifier = Modifier.weight(1f)) {
-                                Text("id del usuario")
-                            }
                         }
                     }
-                    itemsIndexed(
-                        state.filteredMentories.ifEmpty { state.mentories },
-                        key = { _, item -> item.id }
-                    ) { index, mentoring ->
 
-                        val interactionSource = remember { MutableInteractionSource() }
-                        var isEditMentoringDialogVisible by rememberSaveable { mutableStateOf(false) }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .indication(interactionSource, LocalIndication.current)
-                                .pointerInput(true) {
-                                    detectTapGestures(
-                                        onLongPress = {
-                                            isEditMentoringDialogVisible = true
-                                        },
-                                        onPress = {
-                                            val press = PressInteraction.Press(it)
-                                            interactionSource.emit(press)
-                                            tryAwaitRelease()
-                                            interactionSource.emit(PressInteraction.Release(press))
-                                        }
-                                    )
-                                }
-                        ) {
-
-                            val isOddIndex = index % 2 == 0
-                            val backgroundColor =
-                                if (isOddIndex) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.secondaryContainer
-
-                            UserListEntry(
-                                modifier = Modifier.weight(1f),
-                                backgroundColor = backgroundColor
-                            ) {
-                                Text(mentoring.date)
-                            }
-
-                            UserListEntry(
-                                modifier = Modifier.weight(1f),
-                                backgroundColor = backgroundColor
-                            ) {
-                                Text(mentoring.duration.toString())
-                            }
-                            
-                            UserListEntry(
-                                modifier = Modifier.weight(1f),
-                                backgroundColor = backgroundColor
-                            ) {
-                                Text(mentoring.price.toString())
-                            }
-
-                            UserListEntry(
-                                modifier = Modifier.weight(1f),
-                                backgroundColor = backgroundColor
-                            ) {
-                                Text(mentoring.totalRevenue.toString())
-                            }
-
-                            UserListEntry(
-                                modifier = Modifier.weight(1.4f),
-                                backgroundColor = backgroundColor
-                            ) {
-                                Text(mentoring.userId)
-                            }
-                            
-                        }
-
-                        if (isEditMentoringDialogVisible) {
-                            EditMentoringDialog(
-                                mentoring = mentoring,
-                                onEvent = onEvent,
-                                onDissmissRequest = {
-                                    isEditMentoringDialogVisible = false
-                                }
-                            )
-                        }
-
-                    }
+                    TotalRevenueChart(
+                        mentories = state.mentories,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
+
             }
         }
 
@@ -252,5 +262,5 @@ fun MentoriesListView(
         }
 
     }
-    
+
 }
