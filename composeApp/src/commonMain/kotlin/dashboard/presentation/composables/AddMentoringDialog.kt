@@ -30,26 +30,26 @@ fun AddMentoringDialog(
     onEvent: (DashboardEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    
+
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
         initialDisplayMode = DisplayMode.Input
     )
-    
+
     var isComboboxExpanded by rememberSaveable {
         mutableStateOf(false)
     }
-    
+
     LaunchedEffect(key1 = datePickerState.selectedDateMillis) {
         datePickerState.selectedDateMillis?.let {
             onEvent(DashboardEvent.ChangeMentoringDate(TextFormattingUtils.formatDateFromTimestamp(it)))
         }
     }
-    
+
     Dialog(
         onDismissRequest = { onEvent(DashboardEvent.ChangeAddMentoringDialogVisibility(false)) }
     ) {
-        
+
         Card(modifier) {
             Column(
                 modifier = Modifier
@@ -59,16 +59,16 @@ fun AddMentoringDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                
+
                 Text(
                     text = "Registrar mentoría",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
-                
+
                 DatePicker(
                     state = datePickerState
                 )
-                
+
                 TextField(
                     value = state.mentoringDuration.toString(),
                     onValueChange = {
@@ -82,7 +82,7 @@ fun AddMentoringDialog(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 TextField(
                     value = state.mentoringPrice.toString(),
                     onValueChange = {
@@ -96,7 +96,7 @@ fun AddMentoringDialog(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 TextField(
                     value = state.mentoringTotalReveune.toString(),
                     onValueChange = {
@@ -110,13 +110,13 @@ fun AddMentoringDialog(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 ExposedDropdownMenuBox(
                     expanded = isComboboxExpanded,
                     onExpandedChange = { isComboboxExpanded = !isComboboxExpanded },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    
+
                     TextField(
                         value = state.mentoringUserId,
                         onValueChange = {},
@@ -132,13 +132,12 @@ fun AddMentoringDialog(
                         },
                         modifier = Modifier
                             .menuAnchor()
-                            .fillMaxWidth()
-                        ,
+                            .fillMaxWidth(),
                         label = {
                             Text("Id del usuario")
                         }
                     )
-                    
+
                     ExposedDropdownMenu(
                         expanded = isComboboxExpanded,
                         onDismissRequest = { isComboboxExpanded = false }
@@ -146,7 +145,7 @@ fun AddMentoringDialog(
                         state.users.forEach {
                             DropdownMenuItem(
                                 text = {
-                                    Text(it.id)
+                                    Text("${it.id} ${it.name} ")
                                 },
                                 onClick = {
                                     onEvent(DashboardEvent.ChangeMentoringUserId(it.id))
@@ -155,19 +154,19 @@ fun AddMentoringDialog(
                             )
                         }
                     }
-                    
+
                 }
-                
+
                 Row(
-                  horizontalArrangement = Arrangement.spacedBy(8.dp)  
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    
+
                     OutlinedButton(
                         onClick = { onEvent(DashboardEvent.ChangeAddMentoringDialogVisibility(false)) }
                     ) {
                         Text("Cancelar")
                     }
-                    
+
                     Button(
                         onClick = {
                             onEvent(DashboardEvent.SaveMentoring)
@@ -175,10 +174,10 @@ fun AddMentoringDialog(
                     ) {
                         Text("Guardar tutoría")
                     }
-                    
+
                 }
-                
-            }   
+
+            }
         }
     }
 

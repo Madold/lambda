@@ -1,5 +1,6 @@
 package dashboard.presentation
 
+import dashboard.domain.model.Donation
 import dashboard.domain.model.Mentoring
 import dashboard.domain.model.User
 
@@ -31,4 +32,15 @@ sealed interface DashboardEvent {
     data object ClearMentoringQuery: DashboardEvent
     data class UpdateMentoring(val mentoring: Mentoring): DashboardEvent
     data class DeleteMentoringbyId(val mentoringId: Int): DashboardEvent
+    data class ChangeDonationUserId(val userId: String): DashboardEvent
+    data class ChangeDonationMentoringId(val mentoringId: Int): DashboardEvent
+    data class ChangeDonationAmount(val amount: Double): DashboardEvent
+    data object SaveDonation: DashboardEvent
+    data class ChangeDonationsQuery(val query: String): DashboardEvent
+    data object SearchDonations: DashboardEvent
+    data object ClearDonationsQuery: DashboardEvent
+    data class ChangeAddDonationDialogVisibility(val isVisible: Boolean): DashboardEvent
+    data class ChangeDonationsSortType(val sortType: DonationListSortType): DashboardEvent
+    data class UpdateDonation(val donation: Donation): DashboardEvent
+    data class DeleteDonationByUserId(val userId: String): DashboardEvent
 }

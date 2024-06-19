@@ -38,9 +38,9 @@ fun DashboardScreen(
                 )
             }
 
-            composable(route = DrawerOptions.CoursesView.label) {
+            /*composable(route = DrawerOptions.CoursesView.label) {
                 Text("Cursos")
-            }
+            }*/
 
             composable(route = DrawerOptions.MentoriesView.label) {
 
@@ -55,7 +55,11 @@ fun DashboardScreen(
             }
 
             composable(route = DrawerOptions.DonationsView.label) {
-                Text("Donaciones")
+                DonationsListView(
+                    state = state,
+                    onEvent = onEvent,
+                    snackbarHostState = remember { SnackbarHostState() }
+                )
             }
 
         }

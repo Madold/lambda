@@ -3,8 +3,10 @@ package dashboard.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.utils.Result
+import dashboard.domain.local.DonationsRespository
 import dashboard.domain.local.MentoringRepository
 import dashboard.domain.local.UsersRepository
+import dashboard.domain.model.Donation
 import dashboard.domain.model.Mentoring
 import dashboard.domain.model.User
 import dashboard.domain.use_cases.ValidateEmail
@@ -19,6 +21,7 @@ import kotlinx.coroutines.launch
 class DashboardViewModel(
     private val usersRepository: UsersRepository,
     private val mentoringRepository: MentoringRepository,
+    private val donationsRespository: DonationsRespository,
     private val validateId: ValidateId,
     private val validateName: ValidateName,
     private val validateLastName: ValidateLastName,
@@ -46,6 +49,16 @@ class DashboardViewModel(
                 _state.update {
                     it.copy(
                         mentories = mentories
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            donationsRespository.getAllDonations().collectLatest { donations ->
+                _state.update {
+                    it.copy(
+                        donations = donations
                     )
                 }
             }
@@ -352,6 +365,119 @@ class DashboardViewModel(
             is DashboardEvent.DeleteMentoringbyId -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     mentoringRepository.deleteMentory(event.mentoringId)
+                }
+            }
+
+            is DashboardEvent.ChangeDonationAmount -> {
+                _state.update {
+                    it.copy(
+                        donationAmount = event.amount
+                    )
+                }
+            }
+            is DashboardEvent.ChangeDonationMentoringId -> {
+                _state.update {
+                    it.copy(
+                        donationMentoringId = event.mentoringId
+                    )
+                }
+            }
+            is DashboardEvent.ChangeDonationUserId -> {
+                _state.update {
+                    it.copy(
+                        donationUserId = event.userId
+                    )
+                }
+            }
+
+            is DashboardEvent.SaveDonation -> {
+
+                _state.update {
+                    it.copy(
+                        isAddDonationDialogVisible = false
+                    )
+                }
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    donationsRespository.insertDonation(
+                        Donation(
+                            userId = state.value.donationUserId,
+                            mentoringId = state.value.donationMentoringId,
+                            amount = state.value.donationAmount
+                        )
+                    )
+                }
+
+            }
+
+            is DashboardEvent.ChangeDonationsQuery -> {
+                _state.update {
+                    it.copy(
+                        donationsQuery = event.query
+                    )
+                }
+            }
+
+            is DashboardEvent.SearchDonations -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val donations = donationsRespository.getDonationsByUserId(
+                        state.value.donationsQuery
+                    )
+
+                    _state.update {
+                        it.copy(
+                            filteredDonations = donations
+                        )
+                    }
+                }
+            }
+
+           is DashboardEvent.ClearDonationsQuery -> {
+               _state.update {
+                   it.copy(
+                       donationsQuery = "",
+                       filteredDonations = emptyList()
+                   )
+               }
+           }
+
+            is DashboardEvent.ChangeAddDonationDialogVisibility -> {
+                _state.update {
+                    it.copy(
+                        isAddDonationDialogVisible = event.isVisible
+                    )
+                }
+            }
+            is DashboardEvent.ChangeDonationsSortType -> {
+                _state.update {
+                    it.copy(
+                        donationListSortType = event.sortType
+                    )
+                }
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    val filteredDonationsList =  when (event.sortType) {
+                        DonationListSortType.MountAsc -> donationsRespository.getDonationsOrderedByMountAsc()
+                        DonationListSortType.MountDesc -> donationsRespository.getDonationsOrderedByMountDesc()
+                    }
+
+                    _state.update {
+                        it.copy(
+                            filteredDonations = filteredDonationsList
+                        )
+                    }
+
+                }
+            }
+
+            is DashboardEvent.DeleteDonationByUserId -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    donationsRespository.deleteDonationByUserId(event.userId)
+                }
+            }
+            is DashboardEvent.UpdateDonation -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    donationsRespository.updateDonation(event.donation)
                 }
             }
         }

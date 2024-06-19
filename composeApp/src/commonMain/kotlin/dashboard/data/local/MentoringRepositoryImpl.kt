@@ -3,6 +3,7 @@ package dashboard.data.local
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.programmingmasters.lambda.cache.LambdaDatabase
+import com.programmingmasters.lambda.cache.Mentoring_entity
 import core.utils.Result
 import dashboard.data.DatabaseDriverFactory
 import dashboard.domain.local.MentoringRepository

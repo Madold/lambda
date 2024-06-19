@@ -15,7 +15,6 @@ sealed class DrawerOptions(
     companion object {
         val entries get() = listOf(
             UsersView,
-            CoursesView,
             MentoriesView,
             DonationsView
         )    
@@ -27,10 +26,10 @@ sealed class DrawerOptions(
         label = "Usuarios"
     )
     
-    data object CoursesView: DrawerOptions(
+    /*data object CoursesView: DrawerOptions(
         icon = Res.drawable.ic_graduation_cap,
         label = "Cursos",
-    )
+    )*/
     
     data object MentoriesView: DrawerOptions(
         icon = Res.drawable.ic_class_scene,

@@ -1,7 +1,9 @@
 package di
 
+import dashboard.data.local.DonationsRepositoryImpl
 import dashboard.data.local.MentoringRepositoryImpl
 import dashboard.data.local.UsersRepositoryImpl
+import dashboard.domain.local.DonationsRespository
 import dashboard.domain.local.MentoringRepository
 import dashboard.domain.local.UsersRepository
 import dashboard.domain.use_cases.ValidateEmail
@@ -34,6 +36,10 @@ val dashboardModule = module {
     
     single<MentoringRepository> {
         MentoringRepositoryImpl(get())
+    }
+
+    single<DonationsRespository> {
+        DonationsRepositoryImpl(get())
     }
 
 }

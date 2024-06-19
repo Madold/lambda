@@ -12,3 +12,8 @@ enum class MentoringListSortType {
     TotalReveuneDesc,
     Duration
 }
+
+enum class DonationListSortType {
+    MountAsc,
+    MountDesc
+}

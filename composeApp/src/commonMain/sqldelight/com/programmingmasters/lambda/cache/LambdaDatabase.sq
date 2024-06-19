@@ -91,24 +91,23 @@ WHERE id = ?;
 
 CREATE TABLE donation_entity(
     userId TEXT NOT NULL,
-    mentoringId TEXT NOT NULL,
+    mentoringId INTEGER NOT NULL,
     price REAL NOT NULL,
-    date TEXT NOT NULL,
     PRIMARY KEY (userId, mentoringId),
     FOREIGN KEY (userId) REFERENCES user(id),
     FOREIGN KEY (mentoringId) REFERENCES mentoring_entity(id)
 );
 
 insertDonation:
-INSERT INTO donation_entity(userId, mentoringId, price, date)
-VALUES (?, ?, ?, ?);
+INSERT INTO donation_entity(userId, mentoringId, price)
+VALUES (?, ?, ?);
 
 deleteAllDonations:
 DELETE FROM donation_entity;
 
 getAllDonations:
 SELECT * FROM donation_entity
-ORDER BY date ASC;
+ORDER BY price ASC;
 
 getDonationsByUserId:
 SELECT * FROM donation_entity
@@ -116,4 +115,17 @@ WHERE userId = ?;
 
 deleteDonation:
 DELETE FROM donation_entity
-WHERE userId = ? AND mentoringId = ?;
+WHERE userId = ?;
+
+getAllDonationsByMountAsc:
+SELECT * FROM donation_entity
+ORDER BY price ASC;
+
+getAllDonationsByMountDesc:
+SELECT * FROM donation_entity
+ORDER BY price DESC;
+
+updateDonation:
+UPDATE donation_entity
+SET price = ?
+WHERE userId = ?;
