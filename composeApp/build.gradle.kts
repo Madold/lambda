@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.sqldelight.runtime)
             implementation(libs.koin.compose)
             implementation(libs.compose.multiplatform.charts)
+            implementation(libs.windowSize)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

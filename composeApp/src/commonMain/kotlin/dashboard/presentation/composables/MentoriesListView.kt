@@ -144,23 +144,23 @@ fun MentoriesListView(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 UsersListHeader(modifier = Modifier.weight(1f)) {
-                                    Text("Fecha")
+                                    Text(text = "Fecha", style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UsersListHeader(modifier = Modifier.weight(1f)) {
-                                    Text("Duración")
+                                    Text("Duración", style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UsersListHeader(modifier = Modifier.weight(1f)) {
-                                    Text("Valor")
+                                    Text("Valor", style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UsersListHeader(modifier = Modifier.weight(1.4f)) {
-                                    Text("Total recaudado")
+                                    Text("Recaudado", style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UsersListHeader(modifier = Modifier.weight(1f)) {
-                                    Text("id del usuario")
+                                    Text("id usuario", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
                         }
@@ -199,35 +199,35 @@ fun MentoriesListView(
                                     modifier = Modifier.weight(1f),
                                     backgroundColor = backgroundColor
                                 ) {
-                                    Text(mentoring.date)
+                                    Text(mentoring.date, style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UserListEntry(
                                     modifier = Modifier.weight(1f),
                                     backgroundColor = backgroundColor
                                 ) {
-                                    Text(mentoring.duration.toString())
+                                    Text(mentoring.duration.toString(), style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UserListEntry(
                                     modifier = Modifier.weight(1f),
                                     backgroundColor = backgroundColor
                                 ) {
-                                    Text(mentoring.price.toString())
+                                    Text(mentoring.price.toString(), style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UserListEntry(
                                     modifier = Modifier.weight(1f),
                                     backgroundColor = backgroundColor
                                 ) {
-                                    Text(mentoring.totalRevenue.toString())
+                                    Text(mentoring.totalRevenue.toString(), style = MaterialTheme.typography.bodyMedium)
                                 }
 
                                 UserListEntry(
                                     modifier = Modifier.weight(1.4f),
                                     backgroundColor = backgroundColor
                                 ) {
-                                    Text(mentoring.userId)
+                                    Text(mentoring.userId, style = MaterialTheme.typography.bodyMedium)
                                 }
 
                             }

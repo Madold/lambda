@@ -1,8 +1,16 @@
+@file:OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,11 +28,13 @@ import org.koin.compose.KoinContext
 import splash.presentation.SplashScreen
 import ui.LambdaTheme
 
+
 @Composable
 @Preview
 fun App() {
 
     val navController = rememberNavController()
+    val windowSize = calculateWindowSizeClass()
 
     LambdaTheme {
         KoinContext {
@@ -68,7 +78,8 @@ fun App() {
                         DashboardScreen(
                             state = state,
                             onEvent = viewModel::onEvent,
-                            usersViewSnackbarHost = usersViewSnackbarHost
+                            usersViewSnackbarHost = usersViewSnackbarHost,
+                            windowSizeClass = windowSize
                         )
                     }
                 }

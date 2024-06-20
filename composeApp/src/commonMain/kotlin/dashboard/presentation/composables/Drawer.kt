@@ -19,12 +19,10 @@ import org.jetbrains.compose.resources.painterResource
 fun Drawer(
     drawerWidth: Dp = 200.dp,
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    selectedOption: DrawerOptions,
+    onOptionChange: (DrawerOptions) -> Unit
 ) {
-    
-    var selectedOption: DrawerOptions by remember {
-        mutableStateOf(DrawerOptions.UsersView)
-    }
     
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -42,7 +40,7 @@ fun Drawer(
                     drawerOption = drawerOption,
                     isSelected = drawerOption == selectedOption,
                     onClick = {
-                        selectedOption = it
+                        onOptionChange(it)
                         navController.navigate(drawerOption.label) {
                             launchSingleTop = true
                         }

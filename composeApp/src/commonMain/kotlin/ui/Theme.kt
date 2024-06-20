@@ -1,12 +1,19 @@
+@file:OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+
 package ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -99,15 +106,29 @@ fun LambdaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-  val colorScheme = when {
-      darkTheme -> darkScheme
-      else -> lightScheme
-  }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+    val windowSize = calculateWindowSizeClass()
+    val colorScheme = when {
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
+
+    val typography =  when (windowSize.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            Typography(
+                bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                bodyMedium = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
+                bodySmall = MaterialTheme.typography.bodyLarge.copy(fontSize = 12.sp)
+            )
+        }
+        else -> AppTypography
+    }
+
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = typography,
+        content = content
+    )
 }
 
