@@ -136,7 +136,9 @@ fun MentoriesListView(
                 }
             } else {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 8.dp)
                 ) {
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         item {

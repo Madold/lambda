@@ -42,7 +42,7 @@ fun DashboardScreen(
 ) {
 
     val drawerNavController = rememberNavController()
-    var selectedOption: DrawerOptions by rememberSaveable {
+    var selectedOption: DrawerOptions by remember {
         mutableStateOf(DrawerOptions.UsersView)
     }
 

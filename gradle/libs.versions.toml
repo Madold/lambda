@@ -22,6 +22,7 @@ coroutinesVersion = "1.7.3"
 koinComposeMultiplatform = "1.2.0-alpha3"
 charts = "Beta-0.0.5"
 windowSize = "0.5.0"
+composeTables = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
